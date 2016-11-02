@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="limits.cpp">
+    <ClCompile Include="uhrzeit.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
