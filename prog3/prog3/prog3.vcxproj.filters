@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="uhrzeit.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="PerfekteZahlen.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PerfekteZahlen.cpp" />
-    <ClCompile Include="uhrzeit.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BB27DCC4-3589-49E4-8867-D707602CE7B8}</ProjectGuid>
