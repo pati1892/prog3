@@ -67,44 +67,6 @@ private:
 
 int main(int argc, char *argv[], char *envp[])
 {
-	/*cout << "ARGUMENTE" << endl;
-	for (int i = 0; i < argc; ++i)
-		cout << argv[i] << endl;
-
-	cout << "ENVIRONMENT" << endl;
-	int i = 0;
-	while (envp[i] != '\0') {
-		cout << envp[i] << endl;
-		++i;
-
-	}
-	int size = 0;
-	while (envp[size] != nullptr )
-		++size;
-	char **bufferEnvp = new char*[size+1];
-
-	for (int i = 0; i < size ; ++i) {
-		int size2 = 0;
-		while (envp[i][size2] != '\0')
-			++size2;
-		bufferEnvp[i] = new char[size2+1];
-		strcpy(bufferEnvp[i], envp[i]);
-	}
-	bufferEnvp[size] = nullptr;
-
-	cout << "ENVIRONMENT" << endl;
-	int i = 0;
-	while (bufferEnvp[i] != nullptr) {
-		cout << bufferEnvp[i] << endl;
-		++i; 
-
-	}
-	char **array = envp;
-	cout << bufferEnvp << endl;
-	cout << envp << endl;
-	cout << array << endl;
-	*/
-
 	CopyJaggedArray *argvpCopy = new CopyJaggedArray(argv, argc);
 	CopyJaggedArray *envpCopy= new CopyJaggedArray(envp);
 
