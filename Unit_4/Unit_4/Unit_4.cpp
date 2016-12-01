@@ -23,7 +23,7 @@ public:
 		}
 		delete [] bufferArray;
 	}
-	char** getCopy() {
+	char **getCopy() {
 		return bufferArray;
 	}
 	int getLength() {
@@ -38,6 +38,12 @@ public:
 		};
 		qsort(bufferArray, sizeFirstDim, sizeof(char*), func);
 	}
+
+	ostream& operator<<(ostream& Stream, const tBruch& B)
+	{
+		return Stream << B.GetZaehler() << "/" << B.GetNenner();
+	}
+
 private:
 	char **bufferArray;
 	int sizeFirstDim;
