@@ -1,5 +1,5 @@
 // Unit_4.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
-//
+// Mat.Nr.: 511407, Henkelmann Patrick
 
 #include "stdafx.h"
 #include <iostream>
@@ -32,17 +32,14 @@ public:
 
 	void sort() {
 		auto func = [](const void *a, const void *b)  {
-			const char *ia = *(const char **)a;
+			char* const *ia = static_cast<char* const*>(a);
 			const char *ib = *(const char **)b;
-			return strcmp(ia, ib);
+			return strcmp(*ia, ib);
 		};
 		qsort(bufferArray, sizeFirstDim, sizeof(char*), func);
 	}
 
-	ostream& operator<<(ostream& Stream, const tBruch& B)
-	{
-		return Stream << B.GetZaehler() << "/" << B.GetNenner();
-	}
+
 
 private:
 	char **bufferArray;
@@ -71,30 +68,29 @@ private:
 	}
 };
 
+void printArray(CopyJaggedArray &array) {
+	for (int i = 0; i < array.getLength(); ++i)
+		cout << array.getCopy()[i] << endl;
+}
+
 int main(int argc, char *argv[], char *envp[])
 {
+
 	CopyJaggedArray *argvpCopy = new CopyJaggedArray(argv, argc);
 	CopyJaggedArray *envpCopy= new CopyJaggedArray(envp);
 
-	for (int i=0; i < argvpCopy->getLength(); ++i) {
-		cout << argvpCopy->getCopy()[i] << endl;
-
-	}
-
-	for (int i = 0; i < envpCopy->getLength(); ++i) {
-		cout << envpCopy->getCopy()[i] << endl;
-	}
+	cout << "Arguments before sort:" << endl;
+	printArray(*argvpCopy);
+	cout << "\nEnvironment parameters before sort:" << endl;
+	printArray(*envpCopy);
+	
 	envpCopy->sort();
 	argvpCopy->sort();
 
-	for (int i = 0; i < argvpCopy->getLength(); ++i) {
-		cout << argvpCopy->getCopy()[i] << endl;
-
-	}
-
-	for (int i = 0; i < envpCopy->getLength(); ++i) {
-		cout << envpCopy->getCopy()[i] << endl;
-	}
+	cout << "\nArguments after sort:" << endl;
+	printArray(*argvpCopy);
+	cout << "\nEnvironment parameters after sort:" << endl;
+	printArray(*envpCopy);
 
 	delete argvpCopy;
 	delete envpCopy;
