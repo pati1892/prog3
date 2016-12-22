@@ -3,6 +3,8 @@
 #include "LinkedList.h"
 #include <iostream>
 #include <memory>
+#include <crtdbg.h>
+#include <stdlib.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -83,7 +85,14 @@ namespace TestList
 			Assert::AreEqual((*linkedList.get())[3]->getValue(), 1.0);
 
 		}
-		
+		TEST_METHOD(TestMemoryLeak) {
+			linkedList.reset();
+			Assert::IsFalse(_CrtDumpMemoryLeaks);
+
+		}
+
 
 	};
+
 }
+

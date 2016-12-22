@@ -10,6 +10,9 @@ Node::Node(double value):value(value), next(nullptr), previous(nullptr)
 {
 	
 }
+Node::~Node() {
+
+}
 void Node::setNext(Node *node)
 {
 	next = node;
@@ -39,6 +42,17 @@ LinkedList::LinkedList() : head(nullptr), size(0) {
 }
 
 LinkedList::~LinkedList() {
+	if (head != nullptr)
+	{
+		Node *deleteNode = nullptr;
+		while (head->getNext() != nullptr) {
+			deleteNode = head;
+			head = head->getNext();
+			delete(deleteNode);
+		}
+		delete(head);
+		head = nullptr;
+	}
 
 }
 bool LinkedList::isEmpty() {
@@ -62,18 +76,17 @@ void LinkedList::pushback(double value) {
 void LinkedList::removeAt(size_t index) {
 	Node *removeNode = this->operator[](index);
 
-		Node *previous = removeNode->getPrevious();
-		Node *next = removeNode->getNext();
-		if (next != nullptr)
-			next->setPrevious(previous);
+	Node *previous = removeNode->getPrevious();
+	Node *next = removeNode->getNext();
+	if (next != nullptr)
+		next->setPrevious(previous);
 		
-		if (previous != nullptr)
-			previous->setNext(next);
-		else
-			head = next;
+	if (previous != nullptr)
+		previous->setNext(next);
+	else
+		head = next;
 
-	
-
+	delete(removeNode);
 }
 
 Node* LinkedList::operator[](size_t index)const {
@@ -87,11 +100,5 @@ Node* LinkedList::operator[](size_t index)const {
 
 int main() {
 
-	LinkedList *l = new LinkedList;
-	l->pushback(3);
-	l->pushback(2);
-	l->pushback(1);
-	Node *node = (*l)[1];
-	node = new Node(4);
-	std::cout << (*l)[1] << std::endl;
+
 }
