@@ -36,15 +36,19 @@ public:
 	LinkedList& operator=(const LinkedList& src);
 	bool isEmpty();
 	void pushback(double);
-	void pushback(Node*);
 	void removeAt(size_t);
-	Node* operator[](size_t)const;
-
+	double operator[](size_t)const;
 	size_t getSize() const;
 
 private:
 	Node *head;
 	size_t size;
+	void pushback(const Node*);
+	Node* getNode(size_t) const;
+	void copyNodes(const LinkedList&);
+	void removeAllNodes();
+
+
 
 };
 
@@ -80,39 +84,31 @@ Node *Node::getPrevious() const
 
 
 
-LinkedList::LinkedList() : head(nullptr), size(0) {
-
-}
-
+LinkedList::LinkedList() : head(nullptr), size(0) {}
 LinkedList::~LinkedList() {
 	if (!isEmpty())
 	{
-		Node *deleteNode = nullptr;
-		while (head->getNext() != nullptr) {
-			deleteNode = head;
-			head = head->getNext();
-			delete(deleteNode);
-		}
-		delete(head);
+		removeAllNodes();
 		head = nullptr;
 	}
-
 }
-
-LinkedList::LinkedList(const LinkedList& src) :LinkedList() {
+LinkedList::LinkedList(const LinkedList& src) : LinkedList() {
 	std::cout << "CopyConstructor" << std::endl;
-	for (int i = src.getSize() - 1; i >= 0; --i) {
-		this->pushback(src[i]->getValue());
-	}
-
+	copyNodes(src);
 }
 bool LinkedList::isEmpty() {
 	if (head != nullptr)
 		return false;
 	return true;
 }
+void LinkedList::copyNodes(const LinkedList& src) {
+	for (int i = src.getSize() - 1; i >= 0; --i) {
+		this->pushback(src[i]);
+	}
+}
 void LinkedList::pushback(double value) {
-	if (!isEmpty()) {
+	if (!isEmpty())
+	{
 		Node *newNext = head;
 		head = new Node(value);
 		newNext->setPrevious(head);
@@ -121,30 +117,44 @@ void LinkedList::pushback(double value) {
 	else {
 		head = new Node(value);
 	}
-
 	++size;
 }
-
+void LinkedList::pushback(const Node *node){ 
+	pushback(node->getValue());
+}
 void LinkedList::removeAt(size_t index) {
-	Node *removeNode = (*this)[index];
+	Node *removeNode = getNode(index);
 	Node *previous = removeNode->getPrevious();
 	Node *next = removeNode->getNext();
 
 	if (next != nullptr)
 		next->setPrevious(previous);
-
 	if (previous != nullptr)
 		previous->setNext(next);
 	else
 		head = next;
-
 	delete(removeNode);
 	--size;
 }
-
-Node* LinkedList::operator[](size_t index) const {
+void LinkedList::removeAllNodes() {
+	if (size > 0) {
+		Node *lastNode = getNode(size-1);
+		while (lastNode->getPrevious() != nullptr) {
+			Node *prevNode = lastNode->getPrevious();
+			delete(lastNode);
+			lastNode = prevNode;
+		}
+		delete(lastNode);
+		head = nullptr;
+		size = 0;
+	}
+}
+double LinkedList::operator[](size_t index) const {
+	return getNode(index)->getValue();
+}
+Node* LinkedList::getNode(size_t index) const {
 	if (index >= this->size)
-			throw std::out_of_range("OUT OF RANGE");
+		throw std::out_of_range("OUT OF RANGE");
 	Node *currentNode = head;
 	for (size_t i = 0; i < index; ++i) {
 		currentNode = currentNode->getNext();
@@ -153,12 +163,8 @@ Node* LinkedList::operator[](size_t index) const {
 }
 LinkedList& LinkedList::operator=(const LinkedList& src) {
 	std::cout << "Zuweisungsoperator" << std::endl;
-	while (size > 0) {
-		removeAt(0);
-	}
-	for (int i = src.getSize() - 1; i >= 0; --i) {
-		this->pushback(src[i]->getValue());
-	}
+	removeAllNodes();
+	copyNodes(src);
 	return *this;
 }
 size_t LinkedList::getSize() const {
@@ -168,7 +174,7 @@ size_t LinkedList::getSize() const {
 std::ostream& operator<<(std::ostream& out, const LinkedList& list)
 {
 	for (size_t i = 0; i < list.getSize(); ++i) {
-		out << "Index " << i << " = " << list[i]->getValue() << "\n";
+		out << "Index " << i << " = " << list[i] << "\n";
 	}
 	return out;
 }
@@ -213,9 +219,6 @@ int main() {
 		delete(list3Ptr);
 	}
 	
-
 	if (_CrtDumpMemoryLeaks())
 		std::cout << "Memory Leak!" << std::endl;
-
-
 }
