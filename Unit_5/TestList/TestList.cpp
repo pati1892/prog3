@@ -15,12 +15,12 @@ namespace TestList
 	{
 	public:
 		
-		using LinkedListPtr = std::unique_ptr <LinkedList>;
+		using LinkedListPtr = std::unique_ptr <LinkedList<double>>;
 		
 		LinkedListPtr linkedList{ nullptr };
 
 		TEST_METHOD_INITIALIZE(TestInit) {
-			linkedList.reset(new LinkedList());
+			linkedList.reset(new LinkedList<double>());
 		}
 		TEST_METHOD_CLEANUP(TestCleanup) {
 			linkedList.reset();
@@ -34,7 +34,10 @@ namespace TestList
 
 		TEST_METHOD(TestAddElement) 
 		{
-			linkedList->pushback(5.0);
+
+
+			double i = 5;
+			linkedList->pushback(i);
 			Assert::IsFalse(linkedList->isEmpty());
 		}
 		TEST_METHOD(TestAddThreeElements)
@@ -97,7 +100,7 @@ namespace TestList
 				int size = 5;
 				for (int i = 0; i < size; ++i)
 					linkedList->pushback(static_cast<double>(i));
-				LinkedList copyList = *linkedList;
+				LinkedList<double> copyList = *linkedList;
 				Assert::AreEqual(copyList.getSize(), linkedList->getSize());
 				for (size_t i = 0; i < copyList.getSize(); ++i) {
 					Assert::AreEqual(copyList[i], (*linkedList)[i]);
@@ -115,7 +118,7 @@ namespace TestList
 				int size = 5;
 				for (int i = 0; i < size; ++i)
 					linkedList->pushback(static_cast<double>(i));
-				LinkedList *list = new LinkedList();
+				LinkedList<double> *list = new LinkedList<double>();
 				for (int i = 0; i < size; ++i)
 					list->pushback(static_cast<double>(i*10));
 

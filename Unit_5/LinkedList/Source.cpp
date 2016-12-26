@@ -7,125 +7,151 @@
 #include <exception>
 
 
-
+template <typename T>
 class Node
 {
 private:
-	double value;
+	//double value;
+	T &value;
 	Node *next;
 	Node *previous;
 
 public:
-	Node(double value);
+	//Node(double value);
+	Node(T&);
 	Node(const Node&);
 	~Node();
-	double getValue() const;
+	//double getValue() const;
+	T& getValue() const;
 	void setNext(Node *node);
 	void setPrevious(Node*);
 	Node *getNext() const;
 	Node *getPrevious() const;
 };
 
+template <typename T>
 class LinkedList
 {
 public:
 	LinkedList();
-	LinkedList(double);
+
 	LinkedList(const LinkedList&);
 	~LinkedList();
 	LinkedList& operator=(const LinkedList& src);
 	bool isEmpty();
-	void pushback(double);
+
+	void pushback(T&);
 	void removeAt(size_t);
-	double operator[](size_t)const;
+	void removeAllNodes();
+	T& operator[](size_t)const;
 	size_t getSize() const;
 
 private:
-	Node *head;
+	Node<T> *head;
 	size_t size;
-	void pushback(const Node*);
-	Node* getNode(size_t) const;
+	void pushback(const Node<T>*);
+	Node<T>* getNode(size_t) const;
 	void copyNodes(const LinkedList&);
-	void removeAllNodes();
-
-
-
 };
 
-
-Node::Node(double value) :value(value), next(nullptr), previous(nullptr) {}
-Node::Node(const Node& src):Node(src.getValue()){
+template <typename T>
+Node<T>::Node(T &value) :value(value), next(nullptr), previous(nullptr) {}
+template <typename T>
+Node<T>::Node(const Node& src):Node(src.getValue()){
 	std::cout << "Node Kopierkonstruktor" << std::endl;
 }
-Node::~Node() {
+template <typename T>
+Node<T>::~Node() {
 	//std::cout << "Delete: " << value << std::endl;
+	delete(&value);
 }
-void Node::setNext(Node *node)
+template <>
+Node<int>::~Node() {}
+template <>
+Node<double>::~Node() {}
+template <>
+Node<long>::~Node() {}
+template <>
+Node<char>::~Node() {}
+
+template <typename T>
+void Node<T>::setNext(Node<T> *node)
 {
 	next = node;
 }
-void Node::setPrevious(Node *node)
+template <typename T>
+void Node<T>::setPrevious(Node<T> *node)
 {
 	previous = node;
 }
-double Node::getValue() const
+template <typename T>
+T& Node<T>::getValue() const
 {
 	return value;
 }
-Node *Node::getNext() const
+template <typename T>
+Node<T> *Node<T>::getNext() const
 {
 	return next;
 }
-Node *Node::getPrevious() const
+template <typename T>
+Node<T> *Node<T>::getPrevious() const
 {
 	return previous;
 }
 
 
 
-
-LinkedList::LinkedList() : head(nullptr), size(0) {}
-LinkedList::~LinkedList() {
+template <typename T>
+LinkedList<T>::LinkedList() : head(nullptr), size(0) {}
+template <typename T>
+LinkedList<T>::~LinkedList() {
 	if (!isEmpty())
-	{
-		removeAllNodes();
-		head = nullptr;
-	}
-}
-LinkedList::LinkedList(const LinkedList& src) : LinkedList() {
+		removeAllNodes();	
+}template <typename T>
+LinkedList<T>::LinkedList(const LinkedList& src) : LinkedList() {
 	std::cout << "CopyConstructor" << std::endl;
 	copyNodes(src);
 }
-bool LinkedList::isEmpty() {
+template <typename T>
+bool LinkedList<T>::isEmpty() {
 	if (head != nullptr)
 		return false;
 	return true;
 }
-void LinkedList::copyNodes(const LinkedList& src) {
+template <typename T>
+void LinkedList<T>::copyNodes(const LinkedList& src) {
 	for (int i = src.getSize() - 1; i >= 0; --i) {
 		this->pushback(src[i]);
 	}
 }
-void LinkedList::pushback(double value) {
+template <typename T>
+void LinkedList<T>::pushback(T &value) {
 	if (!isEmpty())
 	{
-		Node *newNext = head;
-		head = new Node(value);
+		Node<T> *newNext = head;
+		head = new Node<T>(value);
 		newNext->setPrevious(head);
 		head->setNext(newNext);
 	}
 	else {
-		head = new Node(value);
+		head = new Node<T>(value);
 	}
 	++size;
 }
-void LinkedList::pushback(const Node *node){ 
+template <>
+void LinkedList<int>::pushback(int value) {
+	std::cout << "hallo" << std::endl;
+}
+template <typename T>
+void LinkedList<T>::pushback(const Node<T> *node){ 
 	pushback(node->getValue());
 }
-void LinkedList::removeAt(size_t index) {
-	Node *removeNode = getNode(index);
-	Node *previous = removeNode->getPrevious();
-	Node *next = removeNode->getNext();
+template <typename T>
+void LinkedList<T>::removeAt(size_t index) {
+	Node<T> *removeNode = getNode(index);
+	Node<T> *previous = removeNode->getPrevious();
+	Node<T> *next = removeNode->getNext();
 
 	if (next != nullptr)
 		next->setPrevious(previous);
@@ -136,11 +162,12 @@ void LinkedList::removeAt(size_t index) {
 	delete(removeNode);
 	--size;
 }
-void LinkedList::removeAllNodes() {
-	if (size > 0) {
-		Node *lastNode = getNode(size-1);
+template <typename T>
+void LinkedList<T>::removeAllNodes() {
+	if (!isEmpty()) {
+		Node<T> *lastNode = getNode(size-1);
 		while (lastNode->getPrevious() != nullptr) {
-			Node *prevNode = lastNode->getPrevious();
+			Node<T> *prevNode = lastNode->getPrevious();
 			delete(lastNode);
 			lastNode = prevNode;
 		}
@@ -149,29 +176,34 @@ void LinkedList::removeAllNodes() {
 		size = 0;
 	}
 }
-double LinkedList::operator[](size_t index) const {
+template <typename T>
+T& LinkedList<T>::operator[](size_t index) const {
 	return getNode(index)->getValue();
 }
-Node* LinkedList::getNode(size_t index) const {
-	if (index >= this->size)
+template <typename T>
+Node<T>* LinkedList<T>::getNode(size_t index) const {
+	if (index >= size && index > 0)
 		throw std::out_of_range("OUT OF RANGE");
-	Node *currentNode = head;
+	Node<T> *currentNode = head;
 	for (size_t i = 0; i < index; ++i) {
 		currentNode = currentNode->getNext();
 	}
 	return currentNode;
 }
-LinkedList& LinkedList::operator=(const LinkedList& src) {
+template <typename T>
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList& src) {
 	std::cout << "Zuweisungsoperator" << std::endl;
 	removeAllNodes();
 	copyNodes(src);
 	return *this;
 }
-size_t LinkedList::getSize() const {
+template <typename T>
+size_t LinkedList<T>::getSize() const {
 	return size;
 }
 
-std::ostream& operator<<(std::ostream& out, const LinkedList& list)
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const LinkedList<T>& list)
 {
 	for (size_t i = 0; i < list.getSize(); ++i) {
 		out << "Index " << i << " = " << list[i] << "\n";
@@ -179,7 +211,24 @@ std::ostream& operator<<(std::ostream& out, const LinkedList& list)
 	return out;
 }
 
-void deleteList(LinkedList &list) {
+
+class Dummy {
+public:
+	Dummy::Dummy(int value):value(value){}
+	int Dummy::getValue() const {
+		return value;
+	}
+private:
+	int value;
+};
+
+std::ostream& operator<<(std::ostream& out, const Dummy &dummy)
+{
+	out << dummy.getValue();
+	return out;
+}
+
+void deleteList(LinkedList<int> &list) {
 
 	std::cout << "DeleteList:\n" << list << std::endl;
 	list.removeAt(1);
@@ -192,20 +241,35 @@ void deleteList(LinkedList &list) {
 
 int main() {
 	{
-		LinkedList *list1Ptr = new LinkedList();
-		LinkedList& list1 = *list1Ptr;
+		LinkedList<Dummy> *list1Ptr = new LinkedList<Dummy>();
+		LinkedList<Dummy> &list1 = *list1Ptr;
+		for (int i = 0; i < 20; ++i) {
+			list1.pushback(*new Dummy(i));
+		}
+		std::cout << list1 << std::endl;
+		delete (list1Ptr);
+		
+		LinkedList<int> *list2Ptr = new LinkedList<int>();
+		LinkedList<int> &list2 = *list2Ptr;
+		for (int i = 0; i < 20; ++i) {
+			list2.pushback(i);
+		}
+		std::cout << list2 << std::endl;
+		delete (list2Ptr);
+		/*LinkedList<int> *list1Ptr = new LinkedList<int>();
+		LinkedList<int>& list1 = *list1Ptr;
 		list1.pushback(1);
 		list1.pushback(2);
 		list1.pushback(3);
 
 		std::cout << list1 << std::endl;
 
-		LinkedList list2 = list1;
+		LinkedList<int> list2 = list1;
 		std::cout << "List1\n" << list1 << std::endl;
 		std::cout << "List2\n" << list2 << std::endl;
 
-		LinkedList *list3Ptr = new LinkedList();
-		LinkedList &list3 = *list3Ptr;
+		LinkedList<int> *list3Ptr = new LinkedList<int>();
+		LinkedList<int> &list3 = *list3Ptr;
 		list3.pushback(10);
 		list3.pushback(11);
 		list3.pushback(12);
@@ -217,6 +281,22 @@ int main() {
 
 		delete(list1Ptr);
 		delete(list3Ptr);
+
+		LinkedList<int> *list4Ptr = new LinkedList<int>();
+		LinkedList<int> &list4 = *list4Ptr;
+		for (double i = 0; i < 500; ++i) {
+			list4.pushback(i);
+		}
+		std::cout << "List4\n" << list4 << std::endl;
+		int a = 0;
+		for (int i = 0; a<250; i+2) {
+			++a;
+			list4.removeAt(i);
+		}
+		list4.removeAllNodes();
+		delete(list4Ptr);
+		*/
+
 	}
 	
 	if (_CrtDumpMemoryLeaks())
