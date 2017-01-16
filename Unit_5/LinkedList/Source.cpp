@@ -139,10 +139,6 @@ void LinkedList<T>::pushback(T &value) {
 	}
 	++size;
 }
-template <>
-void LinkedList<int>::pushback(int value) {
-	std::cout << "hallo" << std::endl;
-}
 template <typename T>
 void LinkedList<T>::pushback(const Node<T> *node){ 
 	pushback(node->getValue());
